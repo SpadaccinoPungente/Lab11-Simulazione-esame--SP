@@ -20,7 +20,7 @@ class Model:
         nodes = [self.id_map_artists[id] for id in nodes_by_id]
         self.graph.add_nodes_from(nodes)
 
-        all_edges = DAO.getAllEdges()
+        all_edges = DAO.getAllEdges(selected_genre_id)
 
         for e in all_edges:
             a = self.id_map_artists[e[0]]
