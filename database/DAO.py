@@ -30,7 +30,7 @@ class DAO:
 
         cursor = conn.cursor(dictionary=True)
         query = """
-                SELECT ar.ArtistId, ar.Name, SUM(il.Quantity) as Popularity
+                SELECT ar.ArtistId, ar.Name, COALESCE(SUM(il.Quantity), 0) as Popularity
                 FROM artist ar
                 JOIN album al ON ar.ArtistId = al.ArtistId
                 JOIN track t ON al.AlbumId = t.AlbumId
