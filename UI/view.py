@@ -4,53 +4,38 @@ import flet as ft
 class View(ft.UserControl):
     def __init__(self, page: ft.Page):
         super().__init__()
-        # page stuff
         self._page = page
         self._page.title = "Lab11-Simulazione esame"
         self._page.horizontal_alignment = 'CENTER'
         self._page.theme_mode = ft.ThemeMode.LIGHT
-        # controller (it is not initialized. Must be initialized in the main, after the controller is created)
         self._controller = None
-        # graphical elements
-        self._title = None
-        self.txt_name = None
-        self.btn_hello = None
-        self.txt_result = None
-        self.txt_container = None
 
     def load_interface(self):
-        # title
         self._title = ft.Text("TdP-Simulazione esame Chinook", color="blue", size=24)
         self._page.controls.append(self._title)
 
-
-        self._ddGenre = ft.Dropdown(label="Genere")
+        self._ddGenre = ft.Dropdown(label="Genere", on_change=self._controller.abilitaBtnCreaGrafo)
         self._controller.fillDDGenre()
-        self._btnCreaGrafo = ft.ElevatedButton(text="Crea Grafo", on_click=self._controller.handleCreaGrafo)
+        self._btnCreaGrafo = ft.ElevatedButton(text="Crea Grafo", on_click=self._controller.handleCreaGrafo, disabled=True)
 
-        row1 = ft.Row([self._ddGenre, self._btnCreaGrafo],
-                      alignment=ft.MainAxisAlignment.CENTER)
-        self._page.controls.append(row1)
+        self._page.controls.append(
+            ft.Row([self._ddGenre, self._btnCreaGrafo], alignment=ft.MainAxisAlignment.CENTER)
+        )
 
-        self._ddArtist = ft.Dropdown(label="Artist")
-        self._btnCreaGrafo = ft.ElevatedButton(text="Trova Cammino", on_click=self._controller.handleCammino)
+        self._ddArtist = ft.Dropdown(label="Artist", on_change=self._controller.abilitaBtnTrovaCammino)
+        self._btnTrovaCammino = ft.ElevatedButton(text="Trova Cammino", on_click=self._controller.handleCammino, disabled=True)
 
-        row2 = ft.Row([self._ddArtist, self._btnCreaGrafo],
-                      alignment=ft.MainAxisAlignment.CENTER)
-        self._page.controls.append(row2)
+        self._page.controls.append(
+            ft.Row([self._ddArtist, self._btnTrovaCammino], alignment=ft.MainAxisAlignment.CENTER)
+        )
 
-        # List View where the reply is printed
         self.txt_result = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
         self._page.controls.append(self.txt_result)
-        self._page.update()
+        self.update_page()
 
     @property
     def controller(self):
         return self._controller
-
-    @controller.setter
-    def controller(self, controller):
-        self._controller = controller
 
     def set_controller(self, controller):
         self._controller = controller

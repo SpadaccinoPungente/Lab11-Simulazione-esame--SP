@@ -34,7 +34,7 @@ class DAO:
                 FROM artist ar
                 JOIN album al ON ar.ArtistId = al.ArtistId
                 JOIN track t ON al.AlbumId = t.AlbumId
-                JOIN invoiceline il ON t.TrackId = il.TrackId
+                LEFT JOIN invoiceline il ON t.TrackId = il.TrackId
                 GROUP BY ar.ArtistId, ar.Name
                 """
 
@@ -55,40 +55,18 @@ class DAO:
 
         cursor = conn.cursor(dictionary=True)
         query = """
-                select a.ArtistId
+                select distinct ar.ArtistId
                 from track t
-                join album a on a.AlbumId = t.AlbumId
-                where t.GenreId = %s"""
+                join album al on al.AlbumId = t.AlbumId
+                join artist ar on al.ArtistId = ar.ArtistId
+                where t.GenreId = %s
+                order by ar.Name asc"""
 
         cursor.execute(query, (selected_genre_id,))
 
         for row in cursor:
             result.append(row['ArtistId'])
 
-        cursor.close()
-        conn.close()
-        return result
-
-    @staticmethod
-    def getAllEdges():
-        conn = DBConnect.get_connection()
-        cursor = conn.cursor()
-        query = """
-                with artist_invoice as
-                         (SELECT al.ArtistId, i.CustomerId
-                          FROM album al
-                                   JOIN track t ON al.AlbumId = t.AlbumId
-                                   JOIN invoiceline il ON t.TrackId = il.TrackId
-                                   JOIN invoice i ON il.InvoiceId = i.InvoiceId)
-                select a1.artistid, a2.artistid
-                from artist_invoice a1, \
-                     artist_invoice a2
-                where a1.customerid = a2.customerid
-                  and a1.artistid < a2.artistid
-                group by a1.artistid, a2.artistid \
-                """
-        cursor.execute(query)
-        result = cursor.fetchall()
         cursor.close()
         conn.close()
         return result
