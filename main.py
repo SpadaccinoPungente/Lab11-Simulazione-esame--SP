@@ -13,4 +13,4 @@ def main(page: ft.Page):
     my_view.load_interface()
 
 
-ft.app(target=main)
+ft.app(target=main, view=ft.AppView.WEB_BROWSER)
