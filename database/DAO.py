@@ -48,7 +48,7 @@ class DAO:
         return result
 
     @staticmethod
-    def getArtistsByGenre(selected_genre_id):
+    def getArtistsIdByGenre(selected_genre_id):
         conn = DBConnect.get_connection()
 
         result = []
@@ -70,7 +70,31 @@ class DAO:
         return result
 
     @staticmethod
-    def getAllEdges(selected_genre_id):
+    def getAllEdges():
+        conn = DBConnect.get_connection()
+        cursor = conn.cursor()
+        query = """
+                with artist_invoice as
+                         (SELECT al.ArtistId, i.CustomerId
+                          FROM album al
+                                   JOIN track t ON al.AlbumId = t.AlbumId
+                                   JOIN invoiceline il ON t.TrackId = il.TrackId
+                                   JOIN invoice i ON il.InvoiceId = i.InvoiceId)
+                select a1.artistid, a2.artistid
+                from artist_invoice a1, \
+                     artist_invoice a2
+                where a1.customerid = a2.customerid
+                  and a1.artistid < a2.artistid
+                group by a1.artistid, a2.artistid \
+                """
+        cursor.execute(query)
+        result = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return result
+
+    @staticmethod
+    def getEdgesByGenre(selected_genre_id):
         conn = DBConnect.get_connection()
 
         cursor = conn.cursor()
