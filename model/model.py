@@ -29,10 +29,10 @@ class Model:
             if a.Popularity > b.Popularity:
                 self.graph.add_edge(a, b, weight=w)
             elif b.Popularity > a.Popularity:
-                self.graph.add_edge(a, b, weight=w)
+                self.graph.add_edge(b, a, weight=w)
             else:
                 self.graph.add_edge(a, b, weight=w)
-                self.graph.add_edge(a, b, weight=w)
+                self.graph.add_edge(b, a, weight=w)
 
     def getGraphDetails(self):
         return self.graph.number_of_nodes(), self.graph.number_of_edges()

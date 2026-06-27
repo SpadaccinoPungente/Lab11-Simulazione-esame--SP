@@ -76,7 +76,7 @@ class DAO:
         cursor = conn.cursor()
         query = """
                 with artist_invoice as 
-                (SELECT ar.ArtistId, ar.Name as ArtistName, t.TrackId, t.Name as TrackName, i.CustomerId 
+                (SELECT ar.ArtistId, i.CustomerId 
                 FROM artist ar
                 JOIN album al ON ar.ArtistId = al.ArtistId
                 JOIN track t ON al.AlbumId = t.AlbumId
@@ -84,10 +84,10 @@ class DAO:
                 JOIN invoice i ON il.InvoiceId = i.InvoiceId
                 where t.GenreId = %s
                 )
-                select least(a1.artistid, a2.artistid), greatest(a1.artistid, a2.artistid), count(*)
+                select a1.artistid, a2.artistid
                 from artist_invoice a1, artist_invoice a2
                 where a1.customerid = a2.customerid
-                and a1.artistid != a2.artistid
+                and a1.artistid < a2.artistid
                 group by a1.artistid, a2.artistid       
                 """
 
